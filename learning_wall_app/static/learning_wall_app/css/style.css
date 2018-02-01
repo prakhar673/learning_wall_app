@@ -86,3 +86,11 @@ card-title-text{
   position: relative;
   bottom: 35px; 
 }
+.approved {
+  filter: brightness(200%);
+  visibility: hidden;
+}
+.rejected {
+  filter: brightness(200%);
+  visibility: hidden;
+}

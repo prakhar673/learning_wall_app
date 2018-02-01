@@ -100,7 +100,6 @@ def like(request):
 
 @csrf_exempt
 def approve(request):
-    print "approve received"
     post = Posts.objects.get(id=request.POST.get('id'))
     print "approve received"
     if post:
@@ -110,9 +109,9 @@ def approve(request):
     else:
         return JsonResponse({'data':'1'},status=400)
 
+
 @csrf_exempt
 def reject(request):
-    print "reject received"
     post = Posts.objects.get(id=request.POST.get('id'))
     print "reject received"
     if post:

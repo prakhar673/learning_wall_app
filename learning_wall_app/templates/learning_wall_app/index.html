@@ -20,22 +20,20 @@
     var flag = 0;
     $('.post-like').click(function() {
         if ($(this).hasClass("active-like")) {
+          var id=$(this).attr('id');
             $.post("{% url 'like' %}", {
                 'id': $(this).attr('id'),
                 'type': 'unlike'
             }, function() {}).done(function() {
-                alert("unliked");
-                flag = -1;
-                alert($(this).val());
+                $("#"+id).find('.likes-count').html(parseInt($("#"+id).find('.likes-count').text(),10)-1);
             });
         } else if (!$(this).hasClass("active-like")) {
+           var id=$(this).attr('id');
             $.post("{% url 'like' %}", {
                 'id': $(this).attr('id'),
                 'type': 'like'
             }, function() {}).done(function() {
-                alert("liked");
-                flag = 1
-                alert($(this).val());
+                $("#"+id).find('.likes-count').html(parseInt($("#"+id).find('.likes-count').text(),10)+1);
             });
 
         }
@@ -46,19 +44,20 @@
     });
 
     $('.approve').click(function() {
+      var id = $(this).attr('id');
         $.post("{% url 'approve' %}", {
             'id': $(this).attr('id')
         }, function() {}).done(function() {
-            $(this).addClass('approved');
+            $("#post-"+id).addClass('approved');
         });
     });
     
     $('.reject').click(function() {
-      alert("reject");
+        var id = $(this).attr('id');
         $.post("{% url 'reject' %}", {
             'id': $(this).attr('id')
         }, function() {}).done(function() {
-            $(this).addClass('rejected');
+            $("#post-"+id).addClass('rejected');
         });
 
 
@@ -73,23 +72,14 @@
 
 <body>
    <!-- Modal Structure -->
-   <nav>
+   <nav >
       <div class="nav-wrapper blue">
          <a href="#" class="brand-logo center  ">Learning Wall</a>
          <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="sass.html">Notifications</a></li>
-            <li><a href="collapsible.html">JavaScript</a></li>
          </ul>
       </div>
    </nav>
-   <div class="row blue">
-      <div class="col s4">
-         <img src= "{% static 'learning_wall_app/images/test.png' %}" alt="" class="circle profile-pic hide-on-med-and-down"> <!-- notice the "circle" class -->
-         <a href="#" class="profile-name ">{{user.name}}</a>
-      </div>
-      <div class="col s8">
-         <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Brew a post</a>
-         <div id="modal1" class="modal post-modal">
+   <div id="modal1" class="modal post-modal">
             <div class="modal-content ">
                <form class="col s12" method="post" action="{% url 'post' %}">
                   <div class="input-field col s12">
@@ -100,6 +90,20 @@
                </form>
             </div>
          </div>
+   <div class="fixed-action-btn hide-on-large-only" style="bottom: 45px; right: 24px;">
+          <a class="btn-floating btn-large  modal-trigger red"  href="#modal1">
+            <i class="material-icons">mode_edit</i>
+          </a>
+    </div>
+   <div class="row blue  hide-on-med-and-down">
+      <div class="col s4">
+         <img src= "{% static 'learning_wall_app/images/test.png' %}" alt="" class="circle profile-pic hide-on-med-and-down"> <!-- notice the "circle" class -->
+         <a href="#" class="profile-name ">{{user.name}}</a>
+      </div>
+
+      <div class="col s8">
+         <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Brew a post</a>
+         
       </div>
    </div>
    <div class="container">
@@ -107,7 +111,7 @@
          <div class="col s12 cards-container ">
             {% for post in posts %}
             {% if user.moderator == 1 and post.moderated == 0 %}
-            <div class="card  blue-grey darken-1">
+            <div id="post-{{ post.id }}" class="card blue-grey darken-1">
                <div class="card-content white-text">
 
                   <span class="card-title">
@@ -127,22 +131,29 @@
                </div>
                <div class="card-action">
                   {% if user.id|slugify in post.likes.values|slugify %}
-                  <a id="{{ post.id}}" class="post-like active-like" href="#"><i class="material-icons like">thumb_up</i>({{post.likes.count}})</a>
+                  <a id="{{ post.id}}" class="post-like active-like" href="#"><i class="material-icons like">thumb_up</i>(<x class="likes-count">{{post.likes.count}}</x>)</a>
                   <a  id="{{ post.id}}" class="approve" href="#">approve</a>
                   <a  id="{{ post.id}}" class="reject"  href="#">reject</a>
                   {% else %}
-                  <a id="{{ post.id}}" class="post-like" href="#"><i class="material-icons like">thumb_up</i>({{post.likes.count}})</a>
+                  <a id="{{ post.id}}" class="post-like" href="#"><i class="material-icons like">thumb_up</i>(<x class="likes-count">{{post.likes.count}}</x>)</a>
                   <a id="{{ post.id}}" class="approve" href="#">approve</a>
                   <a id="{{ post.id}}" class="reject" href="#">reject</a>
                   {% endif %}
                </div>
             </div>
             {% elif user.moderator == 0 and post.moderated == 1  %}
-            <div class="card blue-grey darken-1">
+            <div id="post-{{ post.id }}" class="card blue-grey darken-1">
                <div class="card-content white-text">
                   <span class="card-title">
+                  <div class="col s2">
                      <img src= "{% static 'learning_wall_app/images/test.png' %}" alt="" class="circle post-pic">
+                     </div>
+                    <div class="col s10"> 
                      <card-title-text>{{ post.user.name}}  </card-title-text>
+                     </div>
+                     <div class="col s10 offset-s2">
+                     <x class="post-time">{{post.time|naturaltime}}</x>
+                     </div>
                   </span>
                   <p>{{ post.body }}</p>
                </div>
@@ -150,12 +161,12 @@
                   {% if user.id|slugify in post.likes.values|slugify %}
                   <a id="{{ post.id}}" class="post-like active-like" href="#">
                      <i class="material-icons like">thumb_up</i>
-                     <x class="likes-count">({{post.likes.count}})</x>
+                     (<x class="likes-count">{{post.likes.count}}</x>)
                   </a>
                   {% else %}
                   <a id="{{ post.id}}" class="post-like" href="#">
                      <i class="material-icons like">thumb_up</i>
-                     <x class="likes-count">({{post.likes.count}})</x>
+                     (<x class="likes-count">{{post.likes.count}}</x>)
                   </a>
                   {% endif %}
                </div>
@@ -165,6 +176,7 @@
          </div>
       </div>
    </div>
+   
    <div id="pagination">
       <p><a href="?page=2">Page 2</a></p>
    </div>
