@@ -84,7 +84,7 @@ card-title-text{
 .post-time{
   font-size: 12px;
   position: relative;
-  bottom: 35px; 
+  bottom: 25px;
 }
 .approved {
   filter: brightness(200%);
@@ -93,4 +93,7 @@ card-title-text{
 .rejected {
   filter: brightness(200%);
   visibility: hidden;
+}
+.post-body{
+  margin-left: 50%;
 }
