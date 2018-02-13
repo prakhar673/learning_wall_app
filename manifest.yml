@@ -1,0 +1,11 @@
+---
+applications:
+- name: learning-wall
+  memory: 50M
+  disk_quota: 200M
+  instances: 1
+  routes: 
+  - route: learning-wall.com
+  env:
+    DISABLE_COLLECTSTATIC: 1
+  command: gunicorn learning_wall.wsgi
