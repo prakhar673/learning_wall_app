@@ -9,3 +9,5 @@ applications:
   env:
     DISABLE_COLLECTSTATIC: 1
   command: gunicorn learning_wall.wsgi
+  services:
+  - learning-wall-db
