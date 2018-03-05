@@ -18,10 +18,10 @@ def index(request):
     template = 'learning_wall_app/index.html'
     post_list=''
     if request.user.moderator == False:
-        post_list=Posts.objects.filter(moderated=True).annotate(likes_count=Count('likes')).order_by('-likes_count')
+        post_list=Posts.objects.all().annotate(likes_count=Count('likes')).order_by('-likes_count')
     elif request.user.moderator == True:
         post_list=Posts.objects.all().annotate(likes_count=Count('likes')).order_by('-likes_count')
-    paginator = Paginator(post_list,25) # Show 25 contacts per page
+    paginator = Paginator(post_list,45) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
         posts = paginator.page(page)
