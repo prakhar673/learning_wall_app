@@ -122,3 +122,9 @@ card-title-text{
 .btn-floating:hover{
 opacity: 0.6 !important;
 }
+.logo{
+  width: 50%;
+}
+.logo-col{
+  height: 50px;
+}
