@@ -10,8 +10,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.contrib.auth import login,authenticate,logout as django_logout
 from django.contrib.auth.decorators import login_required
-import random
+import random,json
 from django.contrib.auth.hashers import make_password
+from notifications.signals import notify
 
 @login_required(login_url='login/')
 def index(request):
@@ -91,6 +92,7 @@ def like(request):
         print "like received"
         post = Posts.objects.get(id=request.POST.get('id'))
         post.likes.add(request.user)
+        notify.send(request.user, verb='likes',recipient=post.user,action_object=post)
     elif request.POST.get('type') == 'unlike':
         print "unlike received"
         post = Posts.objects.get(id=request.POST.get('id'))
@@ -105,6 +107,7 @@ def approve(request):
     if post:
         post.moderated=True
         post.save()
+        notify.send(request.user, verb='approved',recipient=post.user,action_object=post)
         return JsonResponse({'data':'1'},status=200)
     else:
         return JsonResponse({'data':'1'},status=400)
@@ -116,11 +119,16 @@ def reject(request):
     print "reject received"
     if post:
         post.delete()
+        notify.send(request.user, verb='rejected',recipient=post.user,action_object=post)
         return JsonResponse({'data':'1'},status=200)
     else:
         return JsonResponse({'data':'1'},status=400)
 
 
+@csrf_exempt
+def notifications(request):
+    qs=request.user.notifications.unread()
+    return JsonResponse({'data':list(qs.values())})
 
 
 

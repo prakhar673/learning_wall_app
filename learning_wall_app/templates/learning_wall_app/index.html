@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'learning_wall_app/css/style.css' %}">
     <script>
         $(document).ready(function () {
@@ -62,6 +63,41 @@
 
             });
 
+            $('.notifications').click(function () {
+                var id = $(this).attr('id');
+                $.post("{% url 'notify' %}", {
+                }, function () { }).done(function (data) {
+                    var notifications = ""
+                    $.each(data.data, function (key, value) {
+                        console.log(key);
+                        notifications += "<li><a href='#'>someone " + value.verb + " your post</a></li>"
+
+                    });
+                    console.log(notifications)
+                    $('#dropdown1').html(
+                        notifications
+                    )
+                    // var obj = JSON.parse(data.data)
+                    // console.log(data.data)
+
+                });
+
+
+            });
+
+            $('.dropdown-button').dropdown({
+                inDuration: 300,
+                outDuration: 200,
+                constrainWidth: false, // Does not change width of dropdown to that of the activator
+                hover: false, // Activate on hover
+                gutter: 0, // Spacing from edge
+                belowOrigin: true, // Displays dropdown below the button
+                alignment: 'left', // Displays dropdown with edge aligned to the left of button
+                //stopPropagation: false // Sutops event propagation
+            }
+            );
+
+
             // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
         });
     </script>
@@ -71,11 +107,11 @@
 
 <body>
     <!-- Modal Structure -->
-    <nav>
-        <div class="nav-wrapper  red darken-4">
+    <nav class="hide-on-med-and-down left-pad indigo darken-4">
+        <div class="nav-wrapper  ">
             <div class="row">
                 <div class="col s3 logo-col">
-                    <img class = "logo" src="{% static 'learning_wall_app/images/logo.png' %}">
+                    <t class="brand-logo">Unlearn</t>
                 </div>
                 <div class="col s3">
                     <form>
@@ -89,12 +125,12 @@
                 </div>
                 <div class="col s4">
                     <ul class="tabs tabs-fixed-width">
-                        <li class="tab col s2  red darken-4">
+                        <li class="tab col s2   indigo darken-4">
                             <a href="#all_posts" class="white-text">
                                 <b>Posts</b>
                             </a>
                         </li>
-                        <li class="tab col s2  red darken-4 white-text">
+                        <li class="tab col s2  indigo darken-4 white-text">
                             <a class="white-text" href="#my_posts">
                                 <b>Posts by me </b>
                             </a>
@@ -107,8 +143,11 @@
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
                         <li>
                             <a>
-                                <i class="material-icons le">notifications</i>
+                                <i class="material-icons dropdown-button notifications" href='#' data-activates='dropdown1'>notifications</i>
                             </a>
+                            <ul id='dropdown1' class='dropdown-content'>
+
+                            </ul>
                         </li>
                         <li>
                             <a>
@@ -137,7 +176,7 @@
             <i class="material-icons">mode_edit</i>
         </a>
     </div>
-    <div class="row  red darken-4  hide-on-med-and-down">
+    <div class="row   indigo darken-4  hide-on-med-and-down left-pad">
         <div class="col s3">
             <img src="{% static 'learning_wall_app/images/pp.png' %}" alt="" class="circle profile-pic hide-on-med-and-down">
             <!-- notice the "circle" class -->
@@ -145,8 +184,10 @@
         </div>
 
         <div class="col s3">
-            <a class="waves-effect waves-light unlearn-btn btn modal-trigger orange lighten-1" href="#modal1">
-                <i class="material-icons left">bubble_chart</i><b>Lets Unlearn</b></a>
+            <a class="waves-effect waves-light unlearn-btn btn modal-trigger  red darken-2" href="#modal1">
+                <i class="material-icons left">bubble_chart</i>
+                <b>Lets Unlearn</b>
+            </a>
 
         </div>
     </div>
@@ -154,7 +195,7 @@
         <div class="row">
             <div class="col s12 cards-container ">
                 {% for post in posts %} {% if user.moderator == 1 and post.moderated == 0 %}
-                <div id="post-{{ post.id }}" class="card red lighten-5">
+                <div id="post-{{ post.id }}" class="card indigo lighten-5">
                     <div class="card-content black-text">
 
                         <span class="card-title">
@@ -179,24 +220,25 @@
                         <ul class="no-margin right">
                             {% if user.id|slugify in post.likes.values|slugify %}
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class="  z-depth-2post-like active-like btn-floating btn-large waves-effect waves-light green accent-4">
-                                    <i class="material-icons like">thumb_up</i>
-                                </a>
+                                <a id="{{ post.id}}" class="post-like active-like">
+                                <i  class="  material-icons like">thumb_up</i>(
+                                <x class="likes-count">{{post.likes.count}}</x>)
+                            </a>
                             </li>
                             <li class="cardaction">
-                                <a class=" z-depth-2btn-floating btn-large waves-effect waves-light light-blue">
-                                    <i class="material-icons">share</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="material-icons">share</i>
+
                             </li>
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" z-depth-2 approve btn-floating btn-large waves-effect waves-light yellow accent-4">
-                                    <i class="material-icons like">check</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="approve material-icons like">check</i>
+
                             </li>
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" z-depth-2 reject btn-floating btn-large waves-effect waves-light red accent-4">
-                                    <i class="material-icons like">close</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class=" reject material-icons like">close</i>
+
                             </li>
 
                             <!-- <a id="{{ post.id}}" class="post-like active-like" href="#">
@@ -206,24 +248,25 @@
                                 </a> -->
                             {% else %}
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" z-depth-2 post-like btn-floating btn-large waves-effect waves-light green accent-4">
-                                    <i class="material-icons like">thumb_up</i>
-                                </a>
+                                <a id="{{ post.id}}" class="post-like">
+                                <i  class="material-icons like">thumb_up</i>(
+                                <x class="likes-count">{{post.likes.count}}</x>)
+                            </a>
                             </li>
                             <li class="cardaction">
-                                <a class=" z-depth-2 btn-floating btn-large waves-effect waves-light light-blue">
-                                    <i class="material-icons">share</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="material-icons">share</i>
+
                             </li>
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class="  z-depth-2 approve btn-floating btn-large waves-effect waves-light yellow accent-4">
-                                    <i class="material-icons like">check</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class=" approve material-icons like">check</i>
+
                             </li>
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" z-depth-2 reject btn-floating btn-large waves-effect waves-light red accent-4">
-                                    <i class="material-icons like">close</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="reject material-icons like">close</i>
+
                             </li>
                         </ul>
                         <!-- <a id="{{ post.id}}" class="post-like" href="#">
@@ -236,7 +279,7 @@
                     </div>
                 </div>
                 {% elif user.moderator == 0 and post.moderated == 1 %}
-                <div id="post-{{ post.id }}" class="card red lighten-5">
+                <div id="post-{{ post.id }}" class="card indigo lighten-5">
                     <div class="card-content black-text">
                         <span class="card-title">
                             <div class="col s1">
@@ -257,14 +300,16 @@
                         <ul class="no-margin right">
                             {% if user.id|slugify in post.likes.values|slugify %}
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" post-like active-like btn-floating btn-large waves-effect waves-light green accent-4">
-                                    <i class="material-icons like">thumb_up</i>
-                                </a>
+                                <a id="{{ post.id}}" class="post-like active-like">
+                                <i  class=" material-icons like">thumb_up</i>
+                                (
+                            <x class="likes-count">{{post.likes.count}}</x>)
+                        </a>
                             </li>
                             <li class="cardaction">
-                                <a class="btn-floating btn-large waves-effect waves-light light-blue">
-                                    <i class="material-icons">share</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="material-icons">share</i>
+
                             </li>
 
                             <!-- <a id="{{ post.id}}" class="post-like active-like" href="#">
@@ -274,14 +319,18 @@
                         </a> -->
                             {% else %}
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" post-like btn-floating btn-large waves-effect waves-light green accent-4">
-                                    <i class="material-icons like">thumb_up</i>
-                                </a>
+                                <a>
+                                <i id="{{ post.id}}" class="  post-like material-icons like">thumb_up</i>
+                                (
+                            <x class="likes-count">{{post.likes.count}}</x>)
+                        </a>
+
                             </li>
                             <li class="cardaction">
-                                <a class="btn-floating btn-large waves-effect waves-light light-blue">
-                                    <i class="material-icons">share</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="material-icons">share</i>
+                                
+
                             </li>
                         </ul>
                         <!-- <a id="{{ post.id}}" class="post-like" href="#">
@@ -312,9 +361,8 @@
     <div id="my_posts">
         <div class="row">
             <div class="col s12 cards-container ">
-                {% for post in posts %}
-                {% if post.user.id|slugify == user.id|slugify %}
-                <div id="post-{{ post.id }}" class="card red lighten-5">
+                {% for post in posts %} {% if post.user.id|slugify == user.id|slugify %}
+                <div id="post-{{ post.id }}" class="card indigo lighten-5">
                     <div class="card-content black-text">
                         <span class="card-title">
                             <div class="col s1">
@@ -335,14 +383,16 @@
                         <ul class="no-margin right">
                             {% if user.id|slugify in post.likes.values|slugify %}
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" post-like active-like btn-floating btn-large waves-effect waves-light green accent-4">
-                                    <i class="material-icons like">thumb_up</i>
-                                </a>
+                                <a id="{{ post.id}}" class="post-like active-like">
+                                <i  class=" material-icons like">thumb_up</i>
+                                (
+                            <x class="likes-count">{{post.likes.count}}</x>)
+                        </a>
                             </li>
                             <li class="cardaction">
-                                <a class="btn-floating btn-large waves-effect waves-light light-blue">
-                                    <i class="material-icons">share</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="material-icons">share</i>
+
                             </li>
 
                             <!-- <a id="{{ post.id}}" class="post-like active-like" href="#">
@@ -352,14 +402,18 @@
                         </a> -->
                             {% else %}
                             <li class="cardaction">
-                                <a id="{{ post.id}}" class=" post-like btn-floating btn-large waves-effect waves-light green accent-4">
-                                    <i class="material-icons like">thumb_up</i>
-                                </a>
+                                <a>
+                                <i id="{{ post.id}}" class="  post-like material-icons like">thumb_up</i>
+                                (
+                            <x class="likes-count">{{post.likes.count}}</x>)
+                        </a>
+
                             </li>
                             <li class="cardaction">
-                                <a class="btn-floating btn-large waves-effect waves-light light-blue">
-                                    <i class="material-icons">share</i>
-                                </a>
+
+                                <i id="{{ post.id}}" class="material-icons">share</i>
+                                
+
                             </li>
                         </ul>
                         <!-- <a id="{{ post.id}}" class="post-like" href="#">
@@ -372,8 +426,7 @@
                     </div>
 
                 </div>
-                {%endif%}
-                 {% endfor %}
+                {%endif%} {% endfor %}
             </div>
         </div>
     </div>

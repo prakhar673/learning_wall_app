@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'learning_wall_app',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'notifications'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -81,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'LWALL',
         'USER':'django',
-        'PASSWORD': 'password',
+        'PASSWORD': '1234',
         'PORT':'3306',
         'HOST': ''
     },  

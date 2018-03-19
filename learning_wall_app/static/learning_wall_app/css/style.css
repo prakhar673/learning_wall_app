@@ -1,8 +1,10 @@
 .cards-container {
   column-break-inside: avoid;
 }
+
 body{
   font-family: 'Raleway';
+  background-color: #ecf9fd !important;
 }
 .cards-container .card {
   display: inline-block;
@@ -38,14 +40,13 @@ body{
   width:100%;
 }
 .brand-logo
-{
-  font-family: 'Raleway', sans-serif;
-}
+{ 
+  font-family: 'Gloria Hallelujah', cursive;}
+
 .profile-pic{
   height: 40px;
   margin-left: 2%;
   
-
 }
 .profile-name{
   margin-left:2%;
@@ -72,10 +73,6 @@ card-title-text{
   margin:2px;
   margin-bottom: 25px;
 }
-.like {
-  position: relative;
-  top:4px;
-}
  #loginpanel{
     margin-top: 10%;
     padding:2%;
@@ -84,7 +81,8 @@ card-title-text{
   padding:2%;
 }
 .active-like{
-  filter: brightness(200%);
+  color: darkcyan;
+  
 }
 .post-time{
   font-size: 12px;
@@ -112,8 +110,6 @@ card-title-text{
   width: 100%;
 }
 .cardaction {
-  position: relative;
-  top: 24px;
   display: inline-block;
   padding-left: 5px;}
 .no-margin{
@@ -122,9 +118,13 @@ card-title-text{
 .btn-floating:hover{
 opacity: 0.6 !important;
 }
-.logo{
-  width: 50%;
+a{
+  color: black;
+  cursor: pointer;
 }
-.logo-col{
-  height: 50px;
+.material-icons{
+  cursor: pointer;
+}
+.left-pad{
+  padding-left: 2%;
 }

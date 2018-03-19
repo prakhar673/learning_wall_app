@@ -1,6 +1,7 @@
 from django.conf.urls import url
-
+from django.conf.urls import include
 from . import views
+import notifications.urls
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
@@ -11,4 +12,7 @@ urlpatterns = [
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^approve/$', views.approve, name='approve'),
     url(r'^reject/$', views.reject, name='reject'),
+    url(r'^notifications/', include(notifications.urls, namespace='notifications')),
+    url(r'^notify/$', views.notifications, name='notify')
+
 ]
